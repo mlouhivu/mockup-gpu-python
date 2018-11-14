@@ -7,6 +7,7 @@
 #---------------------------------------------------------------------------#
 import argparse
 import logging
+import atexit
 import sys
 
 from pycuda import driver
@@ -22,6 +23,10 @@ def deadlock(comm, rank):
     if (rank == 0):
         a = comm.recv(source=1)
     comm.Barrier()
+
+def detach(context):
+    context.pop()
+    context.detach()
 
 def run():
     usage = '%(prog)s [options]'
@@ -62,6 +67,7 @@ def run():
     context = device.make_context(flags=driver.ctx_flags.SCHED_YIELD)
     context.set_cache_config(driver.func_cache.PREFER_L1)
     context.push()
+    atexit.register(detach, context)
     print('MPI rank {0}, PCI_BUS_ID {1}, GPU devices {2}'.format(
         rank, device.get_attribute(driver.device_attribute.PCI_BUS_ID), count))
 
@@ -70,8 +76,6 @@ def run():
         deadlock(comm, rank)
 
     # the end.
-    context.pop()
-    context.detach()
     return 0
 
 if __name__ == '__main__':
