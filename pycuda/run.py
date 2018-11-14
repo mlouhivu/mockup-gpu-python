@@ -18,10 +18,17 @@ class ArgumentParser(argparse.ArgumentParser):
         print('\nerror: {0}'.format(message))
         sys.exit(1)
 
+def deadlock(comm, rank):
+    if (rank == 0):
+        a = comm.recv(source=1)
+    comm.Barrier()
+
 def run():
     usage = '%(prog)s [options]'
     desc = 'Test GPUs using PyCUDA + mpi4py.'
     parser = ArgumentParser(description=desc, usage=usage)
+    parser.add_argument('--deadlock', action='store_true', default=False,
+            help='trigger a deliberate MPI deadlock at the end')
     parser.add_argument('--verbose', action='store_true', default=False,
             help='display additional information while running')
     parser.add_argument('--debug', action='store_true', default=False,
@@ -57,6 +64,10 @@ def run():
     context.push()
     print('MPI rank {0}, PCI_BUS_ID {1}, GPU devices {2}'.format(
         rank, device.get_attribute(driver.device_attribute.PCI_BUS_ID), count))
+
+    # hang forever!
+    if args.deadlock:
+        deadlock(comm, rank)
 
     # the end.
     context.pop()
