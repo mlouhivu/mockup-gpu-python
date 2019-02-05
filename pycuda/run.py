@@ -8,10 +8,12 @@
 import argparse
 import logging
 import atexit
+import platform
 import sys
+import os
 
-from pycuda import driver
 from mpi4py import MPI
+from pycuda import driver
 
 import basic
 
@@ -29,6 +31,19 @@ def deadlock(comm, rank):
 def detach(context):
     context.pop()
     context.detach()
+
+def print_devices(comm):
+    rank = comm.Get_rank()
+    size = comm.Get_size()
+    src = rank - 1
+    tgt = rank + 1
+    if src < 0:
+        src = MPI.PROC_NULL
+    if tgt >= size:
+        tgt = MPI.PROC_NULL
+    ok = comm.recv(source=src)
+    os.system('echo "MPI rank={0}  host=$(hostname)"; nvidia-smi'.format(rank))
+    comm.send(1, dest=tgt)
 
 def run():
     usage = '%(prog)s [options]'
@@ -70,8 +85,10 @@ def run():
     context.set_cache_config(driver.func_cache.PREFER_L1)
     context.push()
     atexit.register(detach, context)
-    print('MPI rank {0}, PCI_BUS_ID {1}, GPU devices {2}'.format(
-        rank, device.get_attribute(driver.device_attribute.PCI_BUS_ID), count))
+    print('MPI rank {0}, node {1}, PCI_BUS_ID {1}, GPU devices {2}'.format(
+        rank, platform.node(),
+        device.get_attribute(driver.device_attribute.PCI_BUS_ID), count))
+    print_devices(comm)
 
     # run tests
     basic.sum()
