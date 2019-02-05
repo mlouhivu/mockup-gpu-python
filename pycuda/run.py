@@ -16,6 +16,7 @@ from mpi4py import MPI
 from pycuda import driver
 
 import basic
+import element
 
 class ArgumentParser(argparse.ArgumentParser):
     def error(self, message):
@@ -92,6 +93,8 @@ def run():
 
     # run tests
     basic.sum()
+    element.axpbyz()
+    element.axpbyz_kernel()
 
     # hang forever!
     if args.deadlock:
