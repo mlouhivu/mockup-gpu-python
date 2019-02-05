@@ -13,6 +13,8 @@ import sys
 from pycuda import driver
 from mpi4py import MPI
 
+import basic
+
 class ArgumentParser(argparse.ArgumentParser):
     def error(self, message):
         self.print_help()
@@ -70,6 +72,9 @@ def run():
     atexit.register(detach, context)
     print('MPI rank {0}, PCI_BUS_ID {1}, GPU devices {2}'.format(
         rank, device.get_attribute(driver.device_attribute.PCI_BUS_ID), count))
+
+    # run tests
+    basic.sum()
 
     # hang forever!
     if args.deadlock:
