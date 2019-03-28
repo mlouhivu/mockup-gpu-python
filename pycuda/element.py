@@ -22,9 +22,9 @@ def axpbyz():
     print('b_gpu = {0}'.format(b_gpu))
     print('c_gpu = {0}'.format(c_gpu))
 
-def axpbyz_kernel():
-    a = numpify(None)
-    b = numpify(None)
+def axpbyz_kernel(dtype=float):
+    a = numpify(None, dtype)
+    b = numpify(None, dtype)
     c = numpy.zeros_like(a)
     print('Before axpbyz_kernel')
     print('a = {0}'.format(a))
@@ -35,7 +35,7 @@ def axpbyz_kernel():
     b_gpu = gpuarray.to_gpu(b)
     c_gpu = gpuarray.to_gpu(c)
 
-    f = elementwise.get_axpbyz_kernel(float, float, float)
+    f = elementwise.get_axpbyz_kernel(dtype, dtype, dtype)
     mem_size = a.size
     grid, block = gpuarray.splay(mem_size)
     print('Calling {0} kernel with:  grid={1}  block={2}  mem_size={3}'.format(

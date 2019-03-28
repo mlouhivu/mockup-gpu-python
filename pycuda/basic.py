@@ -2,15 +2,14 @@ from pycuda import gpuarray
 import numpy
 
 def numpify(x, dtype=None):
-    if type(x) == numpy.ndarray:
-        return x.astype(dtype)
-    elif x is None:
-        return numpy.random.random(4).astype(dtype)
-    try:
-        x = numpy.array(x).astype(dtype)
-    except TypeError:
-        x = numpy.random.random(4).astype(dtype)
-    return x
+    if x is not None:
+        try:
+            return numpy.array(x).astype(dtype)
+        except TypeError:
+            pass
+    if dtype == complex:
+        return numpy.random.random(4) + numpy.random.random(4) * 1j
+    return numpy.random.random(4).astype(dtype)
 
 def sum(a=None, b=None):
     a = numpify(a)

@@ -95,6 +95,7 @@ def run():
     basic.sum()
     element.axpbyz()
     element.axpbyz_kernel()
+    element.axpbyz_kernel(complex)
 
     # hang forever!
     if args.deadlock:
