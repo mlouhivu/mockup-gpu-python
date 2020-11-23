@@ -1,22 +1,20 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
 
-__global__ void daxpy_(int n, double a, double *x, double *y)
+__global__ void daxpy_mono_(int n, double a, double *x, double *y)
 {
     int tid = threadIdx.x + blockIdx.x * blockDim.x;
-    int stride = gridDim.x * blockDim.x;
 
-    for (; tid < n; tid += stride) {
+    if (tid < n) {
         y[tid] += a * x[tid];
     }
 }
 
-__global__ void saxpy_(int n, float a, float *x, float *y)
+__global__ void saxpy_mono_(int n, float a, float *x, float *y)
 {
     int tid = threadIdx.x + blockIdx.x * blockDim.x;
-    int stride = gridDim.x * blockDim.x;
 
-    for (; tid < n; tid += stride) {
+    if (tid < n) {
         y[tid] += a * x[tid];
     }
 }
@@ -42,8 +40,13 @@ int main(void)
     cudaMemcpy(x_, x, sizeof(double) * n, cudaMemcpyHostToDevice);
     cudaMemcpy(y_, y, sizeof(double) * n, cudaMemcpyHostToDevice);
 
-    // calculate axpy on GPU
-    daxpy_<<<32,256>>>(n, a, x_, y_);
+    // calculate gridsize for a one-pass kernel launch
+    int blockSize = 256;
+    int gridSize = ((int) (n / (blockSize * 32)) + 1) * 32;
+    printf("<<<gridSize,blockSize>>> = <<<%d,%d>>>\n", gridSize, blockSize);
+
+    // calculate axpy on GPU using a monolithic kernel
+    daxpy_mono_<<<gridSize,blockSize>>>(n, a, x_, y_);
 
     // copy result back to host and print with reference
     printf("  initial: %f %f %f %f ... %f %f\n",
