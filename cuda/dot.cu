@@ -87,6 +87,7 @@ int main(void)
 {
     int i;
     const int blocks = 32;
+    const int threads = 256;
     const int n = 10000;
     double x[n], y[n];
     double z, z_ref;
@@ -121,7 +122,7 @@ int main(void)
     cudaMemcpy(y_, y, sizeof(double) * n, cudaMemcpyHostToDevice);
 
     // calculate dot product on GPU (partial sums)
-    dot_<<<blocks,256>>>(n, x_, y_, buffer_);
+    dot_<<<blocks,threads,threads*sizeof(double)>>>(n, x_, y_, buffer_);
     cudaMemcpy(&partial, buffer_, sizeof(double) * blocks, cudaMemcpyDeviceToHost);
     double d = 0.0;
     for (i=0; i < blocks; i++) {
@@ -131,7 +132,7 @@ int main(void)
     printf("   partial: %f %f %f %f %f ...\n",
             partial[0], partial[1], partial[2], partial[3], partial[4]);
     // reduce partial sums
-    sum_<<<1,blocks>>>(blocks, buffer_, z_);
+    sum_<<<1,blocks,blocks*sizeof(blocks)>>>(blocks, buffer_, z_);
 
     // copy result back to host and print with reference
     cudaMemcpy(&z, z_, sizeof(double), cudaMemcpyDeviceToHost);
