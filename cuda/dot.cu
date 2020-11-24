@@ -8,10 +8,11 @@ __global__ void dot_(int n, double *x, double *y, double *z)
     extern __shared__ double buffer[];
     int i;
 
-    buffer[tid] = 0.0f;
+    double sum = 0.0f;
     for (i = tid; i < n; i += stride) {
-        buffer[tid] += x[i] * y[i];
+        sum += x[i] * y[i];
     }
+    buffer[tid] = sum;
     __syncthreads();
 
     i = blockDim.x / 2;
