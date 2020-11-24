@@ -85,15 +85,14 @@ void simulate_dot(int n, double *x, double *y, double *z,
 
 int main(void)
 {
-    int i;
     const int blocks = 32;
     const int threads = 256;
     const int n = 10000;
     double x[n], y[n];
-    double z, z_ref;
+    double z, z_ref, z_sim;
     double *x_, *y_, *z_, *buffer_;
-    double buffer[blocks], partial[blocks];
-    double z_sim = 0.0f;
+    double buffer[blocks];
+    int i;
 
     // initialise data and calculate reference values on CPU
     z_ref = 0.0f;
@@ -106,12 +105,11 @@ int main(void)
     for (i=0; i < blocks; i++) {
         simulate_dot(n, x, y, buffer, i, 256, blocks);
     }
+    z_sim = 0.0f;
     for (i=0; i < blocks; i++) {
         z_sim += buffer[i];
     }
     printf("simulation: %f\n", z_sim);
-    printf("    buffer: %f %f %f %f %f ...\n",
-            buffer[0], buffer[1], buffer[2], buffer[3], buffer[4]);
 
     // allocate + copy initial values
     cudaMalloc((void **) &x_, sizeof(double) * n);
@@ -122,17 +120,9 @@ int main(void)
     cudaMemcpy(y_, y, sizeof(double) * n, cudaMemcpyHostToDevice);
 
     // calculate dot product on GPU (partial sums)
-    dot_<<<blocks,threads,threads*sizeof(double)>>>(n, x_, y_, buffer_);
-    cudaMemcpy(&partial, buffer_, sizeof(double) * blocks, cudaMemcpyDeviceToHost);
-    double d = 0.0;
-    for (i=0; i < blocks; i++) {
-        d += partial[i];
-    }
-    printf("sum(parti): %f\n", d);
-    printf("   partial: %f %f %f %f %f ...\n",
-            partial[0], partial[1], partial[2], partial[3], partial[4]);
+    dot_<<<blocks, threads, threads * sizeof(double)>>>(n, x_, y_, buffer_);
     // reduce partial sums
-    sum_<<<1,blocks,blocks*sizeof(blocks)>>>(blocks, buffer_, z_);
+    sum_<<<1, blocks, blocks * sizeof(blocks)>>>(blocks, buffer_, z_);
 
     // copy result back to host and print with reference
     cudaMemcpy(&z, z_, sizeof(double), cudaMemcpyDeviceToHost);
