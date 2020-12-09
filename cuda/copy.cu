@@ -19,7 +19,7 @@ int main(void)
     const int n = 10000;
     const int m = 1000;
     int position = 22;
-    double x[n], y[m], y_ref[n];
+    double x[n], y[m], y_ref[m];
     double *x_, *y_;
 
     dim3 blocks(32, 1, 1);
