@@ -26,14 +26,15 @@ __global__ void hello2D_(int n, int2 dim, int *tag, int3 *coord)
     int stridex = gridDim.x * blockDim.x;
     int stridey = gridDim.y * blockDim.y;
     int gid;
+    int i, j;
 
-    for (; tidy < dim.x; tidy += stridey) {
-        for (; tidx < dim.y; tidx += stridex) {
-            gid = dim.y * tidy + tidx;
+    for (i = tidy; i < dim.x; i += stridey) {
+        for (j = tidx; j < dim.y; j += stridex) {
+            gid = dim.y * i + j;
             if (gid < n) {
                 tag[gid] = 1;
-                coord[gid].x = tidy;
-                coord[gid].y = tidx;
+                coord[gid].x = i;
+                coord[gid].y = j;
             }
         }
     }
