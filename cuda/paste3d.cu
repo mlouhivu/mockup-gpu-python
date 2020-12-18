@@ -13,15 +13,16 @@ __global__ void paste3d_(double *src, double *tgt,
     int stridey = gridDim.y * blockDim.y;
     int stridez = gridDim.z * blockDim.z;
     int t, s, tz, sz;
+    int i, j, k;
 
-    for (; tidz < ni; tidz += stridez) {
-        sz = nk * nj * tidz;
-        tz = mk * mj * (tidz + oi) + ok;
-        for (; tidy < nj; tidy += stridey) {
-            s = sz + nk * tidy;
-            t = tz + mk * (tidy + oj);
-            for (; tidx < nk; tidx += stridex) {
-                tgt[tidx + t] = src[tidx + s];
+    for (i = tidz; i < ni; i += stridez) {
+        sz = nk * nj * i;
+        tz = mk * mj * (i + oi) + ok;
+        for (j = tidy; j < nj; j += stridey) {
+            s = sz + nk * j;
+            t = tz + mk * (j + oj);
+            for (k = tidx; k < nk; k += stridex) {
+                tgt[k + t] = src[k + s];
             }
         }
     }
@@ -40,15 +41,16 @@ __global__ void paste3d_fortran_(double *src, double *tgt,
     int stridey = gridDim.y * blockDim.y;
     int stridez = gridDim.z * blockDim.z;
     int t, s, tz, sz;
+    int i, j, k;
 
-    for (; tidz < nk; tidz += stridez) {
-        sz = ni * nj * tidz;
-        tz = mi * mj * (tidz + ok) + oi;
-        for (; tidy < nj; tidy += stridey) {
-            s = sz + ni * tidy;
-            t = tz + mi * (tidy + oj);
-            for (; tidx < ni; tidx += stridex) {
-                tgt[tidx + t] = src[tidx + s];
+    for (i = tidz; i < nk; i += stridez) {
+        sz = ni * nj * i;
+        tz = mi * mj * (i + ok) + oi;
+        for (j = tidy; j < nj; j += stridey) {
+            s = sz + ni * j;
+            t = tz + mi * (j + oj);
+            for (k = tidx; k < ni; k += stridex) {
+                tgt[k + t] = src[k + s];
             }
         }
     }

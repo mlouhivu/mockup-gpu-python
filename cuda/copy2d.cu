@@ -11,12 +11,13 @@ __global__ void copy2d_(double *src, double *tgt,
     int stridex = gridDim.x * blockDim.x;
     int stridey = gridDim.y * blockDim.y;
     int t, s;
+    int i, j;
 
-    for (; tidy < mi; tidy += stridey) {
-        t = mj * tidy;
-        s = nj * (tidy + oi) + oj;
-        for (; tidx < mj; tidx += stridex) {
-            tgt[tidx + t] = src[tidx + s];
+    for (i = tidy; i < mi; i += stridey) {
+        t = mj * i;
+        s = nj * (i + oi) + oj;
+        for (j = tidx; j < mj; j += stridex) {
+            tgt[j + t] = src[j + s];
         }
     }
 }
@@ -31,12 +32,13 @@ __global__ void copy2d_fortran_(double *src, double *tgt,
     int stridex = gridDim.x * blockDim.x;
     int stridey = gridDim.y * blockDim.y;
     int t, s;
+    int i, j;
 
-    for (; tidy < mj; tidy += stridey) {
-        t = mi * tidy;
-        s = ni * (tidy + oj) + oi;
-        for (; tidx < mi; tidx += stridex) {
-            tgt[tidx + t] = src[tidx + s];
+    for (i = tidy; i < mj; i += stridey) {
+        t = mi * i;
+        s = ni * (i + oj) + oi;
+        for (j = tidx; j < mi; j += stridex) {
+            tgt[j + t] = src[j + s];
         }
     }
 }

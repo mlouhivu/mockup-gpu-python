@@ -11,12 +11,13 @@ __global__ void paste2d_(double *src, double *tgt,
     int stridex = gridDim.x * blockDim.x;
     int stridey = gridDim.y * blockDim.y;
     int t, s;
+    int i, j;
 
-    for (; tidy < ni; tidy += stridey) {
-        s = nj * tidy;
-        t = mj * (tidy + oi) + oj;
-        for (; tidx < nj; tidx += stridex) {
-            tgt[tidx + t] = src[tidx + s];
+    for (i = tidy; i < ni; i += stridey) {
+        s = nj * i;
+        t = mj * (i + oi) + oj;
+        for (j = tidx; j < nj; j += stridex) {
+            tgt[j + t] = src[j + s];
         }
     }
 }
@@ -31,12 +32,13 @@ __global__ void paste2d_fortran_(double *src, double *tgt,
     int stridex = gridDim.x * blockDim.x;
     int stridey = gridDim.y * blockDim.y;
     int t, s;
+    int i, j;
 
-    for (; tidy < nj; tidy += stridey) {
-        s = ni * tidy;
-        t = mi * (tidy + oj) + oi;
-        for (; tidx < ni; tidx += stridex) {
-            tgt[tidx + t] = src[tidx + s];
+    for (i = tidy; i < nj; i += stridey) {
+        s = ni * i;
+        t = mi * (i + oj) + oi;
+        for (j = tidx; j < ni; j += stridex) {
+            tgt[j + t] = src[j + s];
         }
     }
 }

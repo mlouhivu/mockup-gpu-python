@@ -13,24 +13,25 @@ __global__ void copy3d_(double *src, double *tgt,
     int stridey = gridDim.y * blockDim.y;
     int stridez = gridDim.z * blockDim.z;
     int t, s, tz, sz;
+    int i, j, k;
 
-    for (; tidz < mi; tidz += stridez) {
-        tz = mk * mj * tidz;
-        sz = nk * nj * (tidz + oi) + ok;
-        for (; tidy < mj; tidy += stridey) {
-            t = tz + mk * tidy;
-            s = sz + nk * (tidy + oj);
-            for (; tidx < mk; tidx += stridex) {
+    for (i = tidz; i < mi; i += stridez) {
+        tz = mk * mj * i;
+        sz = nk * nj * (i + oi) + ok;
+        for (j = tidy; j < mj; j += stridey) {
+            t = tz + mk * j;
+            s = sz + nk * (j + oj);
+            for (k = tidx; k < mk; k += stridex) {
                 /*
-                t = mk * mj * tidz;
-                  + mk * tidy
-                  + tidx
-                s = nk * nj * (tidz + oi)
-                  + nk * (tidy + oj)
-                  + tidx + ok
+                t = mk * mj * i;
+                  + mk * j
+                  + k
+                s = nk * nj * (i + oi)
+                  + nk * (j + oj)
+                  + k + ok
                 tgt[t] = src[s];
                 */
-                tgt[tidx + t] = src[tidx + s];
+                tgt[k + t] = src[k + s];
             }
         }
     }
@@ -49,24 +50,25 @@ __global__ void copy3d_fortran_(double *src, double *tgt,
     int stridey = gridDim.y * blockDim.y;
     int stridez = gridDim.z * blockDim.z;
     int t, s, tz, sz;
+    int i, j, k;
 
-    for (; tidz < mk; tidz += stridez) {
-        tz = mi * mj * tidz;
-        sz = ni * nj * (tidz + ok) + oi;
-        for (; tidy < mj; tidy += stridey) {
-            t = tz + mi * tidy;
-            s = sz + ni * (tidy + oj);
-            for (; tidx < mi; tidx += stridex) {
+    for (i = tidz; i < mk; i += stridez) {
+        tz = mi * mj * i;
+        sz = ni * nj * (i + ok) + oi;
+        for (j = tidy; j < mj; j += stridey) {
+            t = tz + mi * j;
+            s = sz + ni * (j + oj);
+            for (k = tidx; k < mi; k += stridex) {
                 /*
-                t = mi * mj * tidz;
-                  + mi * tidy
-                  + tidx
-                s = ni * nj * (tidz + ok)
-                  + ni * (tidy + oj)
-                  + tidx + oi
+                t = mi * mj * i;
+                  + mi * j
+                  + k
+                s = ni * nj * (i + ok)
+                  + ni * (j + oj)
+                  + k + oi
                 tgt[t] = src[s];
                 */
-                tgt[tidx + t] = src[tidx + s];
+                tgt[k + t] = src[k + s];
             }
         }
     }
