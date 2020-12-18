@@ -29,7 +29,7 @@ __global__ void hello2D_(int n, int2 dim, int *tag, int3 *coord)
 
     for (; tidy < dim.x; tidy += stridey) {
         for (; tidx < dim.y; tidx += stridex) {
-            gid = stridex * tidy + tidx;
+            gid = dim.y * tidy + tidx;
             if (gid < n) {
                 tag[gid] = 1;
                 coord[gid].x = tidy;
