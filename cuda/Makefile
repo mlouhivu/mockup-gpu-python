@@ -1,7 +1,12 @@
 CFLAGS := -gencode arch=compute_70,code=sm_70
 CC := nvcc
 
-all: axpy axpy-mono dot sum copy copy2d copy3d paste paste2d paste3d
+exe := $(patsubst %.cu, %, $(wildcard *.cu))
+
+all: $(exe)
 
 %: %.cu
 	$(CC) $(CFLAGS) $< -o $@
+
+clean:
+	rm $(exe)
