@@ -1,3 +1,4 @@
 ## Mockup: GPUs and Python
 
-Toy code to test various approaches for using GPUs in Python programs.
+Toy codes to test and play around with various approaches of using GPUs
+and how to tie them into Python programs.
