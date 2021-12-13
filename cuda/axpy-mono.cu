@@ -51,7 +51,7 @@ int main(void)
     // copy result back to host and print with reference
     printf("  initial: %f %f %f %f ... %f %f\n",
             y[0], y[1], y[2], y[3], y[n-2], y[n-1]);
-    cudaMemcpy(&y, y_, sizeof(double) * n, cudaMemcpyDeviceToHost);
+    cudaMemcpy(y, y_, sizeof(double) * n, cudaMemcpyDeviceToHost);
     printf("reference: %f %f %f %f ... %f %f\n",
             y_ref[0], y_ref[1], y_ref[2], y_ref[3], y_ref[n-2], y_ref[n-1]);
     printf("   result: %f %f %f %f ... %f %f\n",

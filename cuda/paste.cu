@@ -50,7 +50,7 @@ int main(void)
     printf("  initial: %f %f %f %f ... %f %f\n",
             y[position], y[position+1], y[position+2], y[position+3],
             y[position+n-2], y[position+n-1]);
-    cudaMemcpy(&y, y_, sizeof(double) * m, cudaMemcpyDeviceToHost);
+    cudaMemcpy(y, y_, sizeof(double) * m, cudaMemcpyDeviceToHost);
     printf("reference: %f %f %f %f ... %f %f\n",
             y_ref[position], y_ref[position+1], y_ref[position+2],
             y_ref[position+3], y_ref[position+n-2], y_ref[position+n-1]);

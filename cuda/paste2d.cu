@@ -92,7 +92,7 @@ int main(void)
     printf("  initial: %f %f %f %f ... %f %f\n",
             y[start], y[start+1], y[start+2], y[start+3],
             y[end-1], y[end]);
-    cudaMemcpy(&y, y_, sizeof(double) * m, cudaMemcpyDeviceToHost);
+    cudaMemcpy(y, y_, sizeof(double) * m, cudaMemcpyDeviceToHost);
     printf("reference: %f %f %f %f ... %f %f\n",
             y_ref[start], y_ref[start+1], y_ref[start+2],
             y_ref[start+3], y_ref[end-1], y_ref[end]);
@@ -121,7 +121,7 @@ int main(void)
     printf("  initial: %f %f %f %f ... %f %f\n",
             y[start], y[start+1], y[start+2], y[start+3],
             y[end-1], y[end]);
-    cudaMemcpy(&y, y_, sizeof(double) * m, cudaMemcpyDeviceToHost);
+    cudaMemcpy(y, y_, sizeof(double) * m, cudaMemcpyDeviceToHost);
     printf("reference: %f %f %f %f ... %f %f\n",
             y_ref[start], y_ref[start+1], y_ref[start+2],
             y_ref[start+3], y_ref[end-1], y_ref[end]);
