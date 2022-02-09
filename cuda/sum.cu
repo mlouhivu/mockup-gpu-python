@@ -57,7 +57,7 @@ int main(void)
     sum_<<<1, blocks, blocks * sizeof(double)>>>(blocks, buffer_, z_);
 
     // copy result back to host and print with reference
-    cudaMemcpy(z, z_, sizeof(double), cudaMemcpyDeviceToHost);
+    cudaMemcpy(&z, z_, sizeof(double), cudaMemcpyDeviceToHost);
     printf(" reference: %f\n    result: %f\n", z_ref, z);
 
     return 0;
