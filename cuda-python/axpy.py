@@ -29,7 +29,7 @@ print('  initial: {0} {1} {2} {3} {4} {5}'.format(
     y[0], y[1], y[2], y[3], y[-2], y[-1]))
 Dmemcpy_d2h(yp, y_, n);
 print('reference: {0} {1} {2} {3} {4} {5}'.format(
-    y[0], y[1], y[2], y[3], y[-2], y[-1]))
+    y_ref[0], y_ref[1], y_ref[2], y_ref[3], y_ref[-2], y_ref[-1]))
 print('   result: {0} {1} {2} {3} {4} {5}'.format(
     y[0], y[1], y[2], y[3], y[-2], y[-1]))
 
