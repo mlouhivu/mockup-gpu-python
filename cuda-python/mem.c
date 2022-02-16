@@ -33,7 +33,6 @@ PyObject* deallocate(PyObject *self, PyObject *args)
 PyObject* Dmemcpy_h2d(PyObject *self, PyObject *args)
 {
     int n;
-    PyObject *c;
     PyObject *c_;
     double *x;
     double *x_;
@@ -50,7 +49,6 @@ PyObject* Dmemcpy_h2d(PyObject *self, PyObject *args)
 PyObject* Dmemcpy_d2h(PyObject *self, PyObject *args)
 {
     int n;
-    PyObject *c;
     PyObject *c_;
     double *x;
     double *x_;
