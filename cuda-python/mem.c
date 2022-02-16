@@ -12,16 +12,18 @@ PyObject* Dallocate(PyObject *self, PyObject *args)
 
     cudaMalloc((void **) &x_, sizeof(double) * n);
 
-    return Py_BuildValue("i", x_);
+    return PyCapsule_New(x_, NULL, NULL);
 }
 
 PyObject* deallocate(PyObject *self, PyObject *args)
 {
     int n;
-    double *x_;
+    PyObject *c_;
+    void *x_;
 
-    if (!PyArg_ParseTuple(args, "i", &x_))
+    if (!PyArg_ParseTuple(args, "O", &c_))
         return NULL;
+    x_ = PyCapsule_GetPointer(c_, NULL);
 
     cudaFree(x_);
 
@@ -31,11 +33,14 @@ PyObject* deallocate(PyObject *self, PyObject *args)
 PyObject* Dmemcpy_h2d(PyObject *self, PyObject *args)
 {
     int n;
+    PyObject *c;
+    PyObject *c_;
     double *x;
     double *x_;
 
-    if (!PyArg_ParseTuple(args, "nni", &x_, &x, &n))
+    if (!PyArg_ParseTuple(args, "Oni", &c_, &x, &n))
         return NULL;
+    x_ = (double *) PyCapsule_GetPointer(c_, NULL);
 
     cudaMemcpy(x_, x, sizeof(double) * n, cudaMemcpyHostToDevice);
 
@@ -45,11 +50,14 @@ PyObject* Dmemcpy_h2d(PyObject *self, PyObject *args)
 PyObject* Dmemcpy_d2h(PyObject *self, PyObject *args)
 {
     int n;
+    PyObject *c;
+    PyObject *c_;
     double *x;
     double *x_;
 
-    if (!PyArg_ParseTuple(args, "nni", &x, &x_, &n))
+    if (!PyArg_ParseTuple(args, "nOi", &x, &c_, &n))
         return NULL;
+    x_ = (double *) PyCapsule_GetPointer(c_, NULL);
 
     cudaMemcpy(x, x_, sizeof(double) * n, cudaMemcpyDeviceToHost);
 

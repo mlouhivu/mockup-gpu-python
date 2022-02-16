@@ -38,13 +38,17 @@ PyObject* daxpy_wrapper(PyObject *self, PyObject *args)
 {
     int n;
     double a;
-    double *x;
-    double *y;
+    PyObject *xc;
+    PyObject *yc;
+    double *x_;
+    double *y_;
 
-    if (!PyArg_ParseTuple(args, "idnn", &n, &a, &x, &y))
+    if (!PyArg_ParseTuple(args, "idOO", &n, &a, &xc, &yc))
         return NULL;
+    x_ = (double *) PyCapsule_GetPointer(xc, NULL);
+    y_ = (double *) PyCapsule_GetPointer(yc, NULL);
 
-    daxpy(n, a, x, y);
+    daxpy(n, a, x_, y_);
 
     Py_RETURN_NONE;
 }
