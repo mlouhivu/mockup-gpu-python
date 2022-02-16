@@ -62,6 +62,21 @@ PyObject* Dmemcpy_d2h(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
 }
 
+PyObject* Dpeek(PyObject *self, PyObject *args)
+{
+    PyObject *c_;
+    double x;
+    double *x_;
+
+    if (!PyArg_ParseTuple(args, "O", &c_))
+        return NULL;
+    x_ = (double *) PyCapsule_GetPointer(c_, NULL);
+
+    cudaMemcpy(&x, x_, sizeof(double), cudaMemcpyDeviceToHost);
+
+    return Py_BuildValue("d", x);
+}
+
 static PyMethodDef methods[] = {
     {"Dallocate", Dallocate, METH_VARARGS,
         "cudaMalloc for doubles"},
@@ -71,6 +86,8 @@ static PyMethodDef methods[] = {
         "cudaMemcpy host->device for doubles"},
     {"Dmemcpy_d2h", Dmemcpy_d2h, METH_VARARGS,
         "cudaMemcpy device->host for doubles"},
+    {"Dpeek", Dpeek, METH_VARARGS,
+        "copy a single double from device memory"},
     {NULL, NULL, 0, NULL}
 };
 
