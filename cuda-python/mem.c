@@ -71,7 +71,7 @@ static PyMethodDef methods[] = {
         "cudaFree"},
     {"Dmemcpy_h2d", Dmemcpy_h2d, METH_VARARGS,
         "cudaMemcpy host->device for doubles"},
-    {"Dmemcpy_d2h", Dmemcpy_h2d, METH_VARARGS,
+    {"Dmemcpy_d2h", Dmemcpy_d2h, METH_VARARGS,
         "cudaMemcpy device->host for doubles"},
     {NULL, NULL, 0, NULL}
 };
