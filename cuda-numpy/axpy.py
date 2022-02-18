@@ -1,7 +1,9 @@
+from math import sin, cos
+
+from numpy import array
+
 from _axpy import daxpy
 from _mem import Dallocate, deallocate, Dmemcpy_h2d, Dmemcpy_d2h
-from math import sin, cos
-from numpy import array
 
 n = 10000
 a = 3.4

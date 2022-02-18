@@ -1,7 +1,9 @@
-from _dot import dot
-from _mem import Dallocate, deallocate, Dmemcpy_h2d, Dpeek, Dmemcpy_d2h
 from math import sin, cos
+
 from numpy import array
+
+from _dot import dot
+from _mem import Dallocate, deallocate, Dmemcpy_h2d, Dpeek
 
 blocks = 32
 threads = 256
