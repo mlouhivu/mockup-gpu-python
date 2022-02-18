@@ -3,9 +3,9 @@ from _mem import Dallocate, deallocate, Dmemcpy_h2d, Dpeek, Dmemcpy_d2h
 from math import sin, cos
 from numpy import array
 
-blocks = 32;
-threads = 256;
-n = 10000;
+blocks = 32
+threads = 256
+n = 10000
 
 # initialise data and calculate reference values on CPU
 x = array([sin(i) * 2.3 for i in range(n)], float)

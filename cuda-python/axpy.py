@@ -3,8 +3,8 @@ from _mem import Dallocate, deallocate, Dmemcpy_h2d, Dmemcpy_d2h
 from math import sin, cos
 from array import array
 
-n = 10000;
-a = 3.4;
+n = 10000
+a = 3.4
 
 # initialise data and calculate reference values on CPU
 x = array('d', [sin(i) * 2.3 for i in range(n)])
