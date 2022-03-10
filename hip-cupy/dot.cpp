@@ -94,13 +94,11 @@ PyObject* dot_wrapper(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
 }
 
-extern "C"
 static PyMethodDef methods[] = {
     {"dot", dot_wrapper, METH_VARARGS, "dot"},
     {NULL, NULL, 0, NULL}
 };
 
-extern "C"
 static struct PyModuleDef module = {
     PyModuleDef_HEAD_INIT,
     "dot",
@@ -109,7 +107,6 @@ static struct PyModuleDef module = {
     methods
 };
 
-extern "C"
 PyMODINIT_FUNC
 PyInit__dot(void)
 {

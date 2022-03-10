@@ -1,4 +1,4 @@
-CFLAGS := -shared -I$(PYTHONHOME)/include/python3.8 -fPIC
+CFLAGS := -shared -I$(PYTHONHOME)/include/python3.9 -fPIC
 CC := hipcc
 
 exe := $(patsubst %.cpp, _%.so, $(wildcard *.cpp))

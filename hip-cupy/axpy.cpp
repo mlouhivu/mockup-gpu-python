@@ -65,14 +65,12 @@ PyObject* saxpy_wrapper(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
 }
 
-extern "C"
 static PyMethodDef methods[] = {
     {"daxpy",  daxpy_wrapper, METH_VARARGS, "Daxpy"},
     {"saxpy",  saxpy_wrapper, METH_VARARGS, "Saxpy"},
     {NULL, NULL, 0, NULL}
 };
 
-extern "C"
 static struct PyModuleDef module = {
     PyModuleDef_HEAD_INIT,
     "axpy",
@@ -81,7 +79,6 @@ static struct PyModuleDef module = {
     methods
 };
 
-extern "C"
 PyMODINIT_FUNC
 PyInit__axpy(void)
 {
