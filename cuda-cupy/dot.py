@@ -1,6 +1,6 @@
 from math import sin, cos
 
-from numpy import array
+import numpy
 import cupy
 
 from _dot import dot
@@ -10,8 +10,8 @@ threads = 256
 n = 10000
 
 # initialise data and calculate reference values on CPU
-x = array([sin(i) * 2.3 for i in range(n)], float)
-y = array([cos(i) * 1.1 for i in range(n)], float)
+x = numpy.array([sin(i) * 2.3 for i in range(n)], float)
+y = numpy.array([cos(i) * 1.1 for i in range(n)], float)
 z_ref = sum(x * y)
 
 # allocate + copy initial values
