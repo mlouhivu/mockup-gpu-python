@@ -94,8 +94,62 @@ PyObject* dot_wrapper(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
 }
 
+void simulate_dot(int n, double *x, double *y, double *z,
+                  int blockid, int blockdim, int griddim)
+{
+    int tid;
+    int stride = griddim * blockdim;
+    double buffer[blockdim];
+    int i;
+
+    for (tid=0; tid < blockdim; tid++) {
+        int gid = tid + blockid * blockdim;
+        buffer[tid] = 0.0f;
+        for (i = gid; i < n; i += stride) {
+            buffer[tid] += x[i] * y[i];
+        }
+    }
+
+    i = blockdim / 2;
+    while (i > 0) {
+        for (tid=0; tid < blockdim; tid++) {
+            if (tid < i)
+                buffer[tid] += buffer[tid + i];
+        }
+        i = i / 2;
+    }
+
+    z[blockid] = buffer[0];
+}
+
+extern "C"
+PyObject* cpu_dot(PyObject *self, PyObject *args)
+{
+    int blocks;
+    int threads;
+    int n;
+    int i;
+    double *x;
+    double *y;
+    double *z;
+
+    if (!PyArg_ParseTuple(args, "iiinnn",
+                          &blocks, &threads, &n, &x, &y, &z))
+        return NULL;
+
+    double buffer[blocks];
+    z[0] = 0.0;
+    for (i=0; i < blocks; i++) {
+        simulate_dot(n, x, y, buffer, i, threads, blocks);
+        z[0] += buffer[i];
+    }
+
+    Py_RETURN_NONE;
+}
+
 static PyMethodDef methods[] = {
     {"dot", dot_wrapper, METH_VARARGS, "dot"},
+    {"cpu_dot", cpu_dot, METH_VARARGS, "dot on CPU"},
     {NULL, NULL, 0, NULL}
 };
 
