@@ -18,7 +18,7 @@ import numpy
 
 import basic
 #import element
-#import blas
+import blas
 
 class ArgumentParser(argparse.ArgumentParser):
     def error(self, message):
@@ -89,8 +89,8 @@ def run():
 #    element.axpbyz()
 #    element.axpbyz_kernel()
 #    element.axpbyz_kernel(complex)
-#    blas.axpy()
-#    blas.axpy(numpy.float32)
+    blas.axpy()
+    blas.axpy(numpy.float32)
 
     # hang forever!
     if args.deadlock:
