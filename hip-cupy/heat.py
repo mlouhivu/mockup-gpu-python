@@ -4,7 +4,7 @@ import cupy as cp
 # Note that evolve_buffers require cupy with Python buffer protocol support
 # (see e.g. https://github.com/cupy/cupy/issues/1532 how to add manually)
 # evolve_pointer works with vanilla cupy
-from _evolve import evolve_buffer, evolve_buffer_gpu, evolve_pointer
+from _heat import evolve_buffer, evolve_buffer_gpu, evolve_pointer
 
 # Use managed memory
 cp.cuda.set_allocator(cp.cuda.malloc_managed)

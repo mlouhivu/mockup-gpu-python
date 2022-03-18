@@ -180,17 +180,16 @@ static PyMethodDef functions[] = {
  {0, 0, 0, 0}
 };
 
-static struct PyModuleDef evolvemodule = {
+static struct PyModuleDef module = {
     PyModuleDef_HEAD_INIT,
-    "_evolve",
+    "heat",
     NULL,
     -1,
     functions
 };
 
-PyMODINIT_FUNC PyInit__evolve(void)
+PyMODINIT_FUNC PyInit__heat(void)
 {
     import_array(); // Required for NumPy API
-    return PyModule_Create(&evolvemodule);
+    return PyModule_Create(&module);
 }
-
