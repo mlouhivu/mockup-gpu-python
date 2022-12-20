@@ -18,22 +18,21 @@ void saxpy(hipblasHandle_t handle, int n, float *a_, float *x_, float *y_)
 
 PyObject* daxpy_wrapper(PyObject *self, PyObject *args)
 {
+    PyObject *c;
     int n;
     double *a_;
     double *x_;
     double *y_;
-    hipblasHandle_t handle;
+    hipblasHandle_t *handle;
 
-    if (!PyArg_ParseTuple(args, "innn", &n, &a_, &x_, &y_))
+    if (!PyArg_ParseTuple(args, "Oinnn", &c, &n, &a_, &x_, &y_))
         return NULL;
-
-    hipblasCreate(&handle);
+    handle = PyCapsule_GetPointer(c, NULL);
 
     // use GPU pointers to keep data on GPU
-    hipblasSetPointerMode(handle, HIPBLAS_POINTER_MODE_DEVICE);
+    hipblasSetPointerMode(*handle, HIPBLAS_POINTER_MODE_DEVICE);
 
-    daxpy(handle, n, a_, x_, y_);
-    hipblasDestroy(handle);
+    daxpy(*handle, n, a_, x_, y_);
 
     Py_RETURN_NONE;
 }
@@ -60,9 +59,36 @@ PyObject* saxpy_wrapper(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
 }
 
+PyObject* create_handle(PyObject *self, PyObject *args)
+{
+    hipblasHandle_t *handle;
+
+    handle = malloc(sizeof(hipblasHandle_t));
+    hipblasCreate(handle);
+    return PyCapsule_New(handle, NULL, NULL);
+}
+
+PyObject* destroy_handle(PyObject *self, PyObject *args)
+{
+    PyObject *c;
+    hipblasHandle_t *handle;
+
+    if (!PyArg_ParseTuple(args, "O", &c))
+        return NULL;
+    handle = PyCapsule_GetPointer(c, NULL);
+
+    hipDeviceSynchronize();
+    hipblasDestroy(*handle);
+    free(handle);
+
+    Py_RETURN_NONE;
+}
+
 static PyMethodDef methods[] = {
-    {"daxpy_async",  daxpy_wrapper, METH_VARARGS, "Daxpy"},
-    {"saxpy_async",  saxpy_wrapper, METH_VARARGS, "Saxpy"},
+    {"daxpy_async",    daxpy_wrapper, METH_VARARGS, "Daxpy"},
+    {"saxpy_async",    saxpy_wrapper, METH_VARARGS, "Saxpy"},
+    {"create_handle",  create_handle, METH_VARARGS, "Create hipBLAS handle"},
+    {"destroy_handle", destroy_handle, METH_VARARGS, "Destroy hipBLAS handle"},
     {NULL, NULL, 0, NULL}
 };
 

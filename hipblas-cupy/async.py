@@ -4,6 +4,7 @@ from numpy import array
 import cupy
 
 from _async import daxpy_async
+from _async import create_handle, destroy_handle
 
 n = 10000
 a = 3.4
@@ -18,8 +19,10 @@ x_ = cupy.asarray(x)
 y_ = cupy.asarray(y)
 a_ = cupy.asarray(array([a], float))
 
+handle = create_handle()
+
 # calculate axpy on GPU and keep data on GPUs
-daxpy_async(n, a_.data.ptr, x_.data.ptr, y_.data.ptr)
+daxpy_async(handle, n, a_.data.ptr, x_.data.ptr, y_.data.ptr)
 
 # copy result back to host and print with reference
 print('  initial: {0} {1} {2} {3} {4} {5}'.format(
@@ -29,3 +32,6 @@ print('reference: {0} {1} {2} {3} {4} {5}'.format(
     y_ref[0], y_ref[1], y_ref[2], y_ref[3], y_ref[-2], y_ref[-1]))
 print('   result: {0} {1} {2} {3} {4} {5}'.format(
     y[0], y[1], y[2], y[3], y[-2], y[-1]))
+
+destroy_handle(handle)
+del handle
