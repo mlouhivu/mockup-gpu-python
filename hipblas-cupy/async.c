@@ -29,9 +29,6 @@ PyObject* daxpy_wrapper(PyObject *self, PyObject *args)
         return NULL;
     handle = PyCapsule_GetPointer(c, NULL);
 
-    // use GPU pointers to keep data on GPU
-    hipblasSetPointerMode(*handle, HIPBLAS_POINTER_MODE_DEVICE);
-
     daxpy(*handle, n, a_, x_, y_);
 
     Py_RETURN_NONE;
@@ -39,22 +36,18 @@ PyObject* daxpy_wrapper(PyObject *self, PyObject *args)
 
 PyObject* saxpy_wrapper(PyObject *self, PyObject *args)
 {
+    PyObject *c;
     int n;
     float *a_;
     float *x_;
     float *y_;
-    hipblasHandle_t handle;
+    hipblasHandle_t *handle;
 
-    if (!PyArg_ParseTuple(args, "innn", &n, &a_, &x_, &y_))
+    if (!PyArg_ParseTuple(args, "Oinnn", &c, &n, &a_, &x_, &y_))
         return NULL;
+    handle = PyCapsule_GetPointer(c, NULL);
 
-    hipblasCreate(&handle);
-
-    // use GPU pointers to keep data on GPU
-    hipblasSetPointerMode(handle, HIPBLAS_POINTER_MODE_DEVICE);
-
-    saxpy(handle, n, a_, x_, y_);
-    hipblasDestroy(handle);
+    saxpy(*handle, n, a_, x_, y_);
 
     Py_RETURN_NONE;
 }
@@ -65,6 +58,10 @@ PyObject* create_handle(PyObject *self, PyObject *args)
 
     handle = malloc(sizeof(hipblasHandle_t));
     hipblasCreate(handle);
+
+    // use GPU pointers to keep data on GPU
+    hipblasSetPointerMode(*handle, HIPBLAS_POINTER_MODE_DEVICE);
+
     return PyCapsule_New(handle, NULL, NULL);
 }
 
