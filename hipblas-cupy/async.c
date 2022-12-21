@@ -34,8 +34,6 @@ PyObject* daxpy_global(PyObject *self, PyObject *args)
 PyObject* create_global(PyObject *self, PyObject *args)
 {
     hipblasCreate(&_handle);
-
-    // use GPU pointers to keep data on GPU
     hipblasSetPointerMode(_handle, HIPBLAS_POINTER_MODE_DEVICE);
 
     Py_RETURN_NONE;
@@ -76,8 +74,6 @@ PyObject* create_capsule(PyObject *self, PyObject *args)
 
     handle = malloc(sizeof(hipblasHandle_t));
     hipblasCreate(handle);
-
-    // use GPU pointers to keep data on GPU
     hipblasSetPointerMode(*handle, HIPBLAS_POINTER_MODE_DEVICE);
 
     return PyCapsule_New(handle, NULL, NULL);

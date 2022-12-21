@@ -37,7 +37,7 @@ print('reference: {0} {1} {2} {3} {4} {5}'.format(
 # create BLAS handle (in a capsule)
 handle = create_capsule()
 
-# calculate axpy on GPU and keep data on GPUs using capsules
+# calculate axpy on GPU asynchronously using capsules
 t_capsule = timeit.repeat(
         'daxpy_capsule(handle, n, a_.data.ptr, x_.data.ptr, y_.data.ptr)',
         number=repeat, repeat=1, globals=globals())
@@ -56,7 +56,7 @@ y_ = cupy.asarray(y)
 # create BLAS handle (global variable)
 create_global()
 
-# calculate axpy on GPU without keeping data on GPUs using a global handle
+# calculate axpy on GPU asynchronously using a global handle
 t_global = timeit.repeat(
         'daxpy_global(n, a_.data.ptr, x_.data.ptr, y_.data.ptr)',
         number=repeat, repeat=1, globals=globals())
@@ -71,7 +71,7 @@ destroy_global()
 y[:] = y_orig[:]
 y_ = cupy.asarray(y)
 
-# calculate axpy on GPU without keeping data on GPUs
+# calculate axpy on GPU synchronously
 t_sync = timeit.repeat(
         'daxpy(n, a, x_.data.ptr, y_.data.ptr)',
         number=repeat, repeat=1, globals=globals())
