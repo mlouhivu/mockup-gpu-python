@@ -34,28 +34,6 @@ PyObject* daxpy_wrapper(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
 }
 
-PyObject* daxpy_wrapper_async(PyObject *self, PyObject *args)
-{
-    int n;
-    double a;
-    double *x_;
-    double *y_;
-    hipblasHandle_t handle;
-
-    if (!PyArg_ParseTuple(args, "idnn", &n, &a, &x_, &y_))
-        return NULL;
-
-    hipblasCreate(&handle);
-
-    // use GPU pointers to keep data on GPU
-    hipblasSetPointerMode(handle, HIPBLAS_POINTER_MODE_DEVICE);
-
-    daxpy(handle, n, a, x_, y_);
-    hipblasDestroy(handle);
-
-    Py_RETURN_NONE;
-}
-
 PyObject* saxpy_wrapper(PyObject *self, PyObject *args)
 {
     int n;
@@ -77,7 +55,6 @@ PyObject* saxpy_wrapper(PyObject *self, PyObject *args)
 static PyMethodDef methods[] = {
     {"daxpy",  daxpy_wrapper, METH_VARARGS, "Daxpy"},
     {"saxpy",  saxpy_wrapper, METH_VARARGS, "Saxpy"},
-    {"daxpy_async",  daxpy_wrapper_async, METH_VARARGS, "Daxpy async"},
     {NULL, NULL, 0, NULL}
 };
 
