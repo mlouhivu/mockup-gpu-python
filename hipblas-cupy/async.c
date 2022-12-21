@@ -11,7 +11,48 @@ void daxpy(hipblasHandle_t handle, int n, double *a_, double *x_, double *y_)
     hipblasDaxpy(handle, n, a_, x_, 1, y_, 1);
 }
 
-PyObject* daxpy_wrapper(PyObject *self, PyObject *args)
+
+/* Global variable version */
+
+static hipblasHandle_t _handle;
+
+PyObject* daxpy_global(PyObject *self, PyObject *args)
+{
+    int n;
+    double *a_;
+    double *x_;
+    double *y_;
+
+    if (!PyArg_ParseTuple(args, "innn", &n, &a_, &x_, &y_))
+        return NULL;
+
+    daxpy(_handle, n, a_, x_, y_);
+
+    Py_RETURN_NONE;
+}
+
+PyObject* create_global(PyObject *self, PyObject *args)
+{
+    hipblasCreate(&_handle);
+
+    // use GPU pointers to keep data on GPU
+    hipblasSetPointerMode(_handle, HIPBLAS_POINTER_MODE_DEVICE);
+
+    Py_RETURN_NONE;
+}
+
+PyObject* destroy_global(PyObject *self, PyObject *args)
+{
+    hipDeviceSynchronize();
+    hipblasDestroy(_handle);
+
+    Py_RETURN_NONE;
+}
+
+
+/* Capsuled pointer version */
+
+PyObject* daxpy_capsule(PyObject *self, PyObject *args)
 {
     PyObject *c;
     int n;
@@ -29,7 +70,7 @@ PyObject* daxpy_wrapper(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
 }
 
-PyObject* create_handle(PyObject *self, PyObject *args)
+PyObject* create_capsule(PyObject *self, PyObject *args)
 {
     hipblasHandle_t *handle;
 
@@ -42,7 +83,7 @@ PyObject* create_handle(PyObject *self, PyObject *args)
     return PyCapsule_New(handle, NULL, NULL);
 }
 
-PyObject* destroy_handle(PyObject *self, PyObject *args)
+PyObject* destroy_capsule(PyObject *self, PyObject *args)
 {
     PyObject *c;
     hipblasHandle_t *handle;
@@ -58,10 +99,14 @@ PyObject* destroy_handle(PyObject *self, PyObject *args)
     Py_RETURN_NONE;
 }
 
+
 static PyMethodDef methods[] = {
-    {"daxpy_async",    daxpy_wrapper, METH_VARARGS, "Daxpy"},
-    {"create_handle",  create_handle, METH_VARARGS, "Create hipBLAS handle"},
-    {"destroy_handle", destroy_handle, METH_VARARGS, "Destroy hipBLAS handle"},
+    {"daxpy_global",    daxpy_global, METH_VARARGS, "Daxpy w/ global"},
+    {"create_global",   create_global, METH_VARARGS, "Create hipBLAS handle"},
+    {"destroy_global",  destroy_global, METH_VARARGS, "Destroy hipBLAS handle"},
+    {"daxpy_capsule",   daxpy_capsule, METH_VARARGS, "Daxpy w/ capsules"},
+    {"create_capsule",  create_capsule, METH_VARARGS, "Create hipBLAS handle"},
+    {"destroy_capsule", destroy_capsule, METH_VARARGS, "Destroy hipBLAS handle"},
     {NULL, NULL, 0, NULL}
 };
 
