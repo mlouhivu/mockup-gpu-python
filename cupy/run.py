@@ -17,6 +17,7 @@ import cupy
 import numpy
 
 import basic
+import memory
 #import element
 #import blas
 
@@ -86,6 +87,7 @@ def run():
 
     # run tests
     basic.sum()
+    memory.managed()
 #    element.axpbyz()
 #    element.axpbyz_kernel()
 #    element.axpbyz_kernel(complex)
